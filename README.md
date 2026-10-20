@@ -22,7 +22,10 @@ Credenciales locales:
 ## Endpoints
 
 - `POST /auth/login`
+- `POST /auth/logout`
 - `GET /q/health`
+
+El login establece la sesión en una cookie `HttpOnly`, `SameSite=Strict` y host-only; el token no se devuelve en el cuerpo. El origen permitido para CORS y para solicitudes que cambian estado se configura con `APP_ALLOWED_ORIGIN` (por defecto `http://localhost:4200`). La cookie usa `Secure` en el perfil `prod`; `SESSION_COOKIE_SECURE` permite configurar el atributo explícitamente. Mantén `Secure` habilitado fuera del desarrollo local HTTP.
 
 ## Propósito de la rama `main`
 
