@@ -1,57 +1,73 @@
 # Feature Intake -> Spec Checklist
 
 ## 1. Summary
-- Añadir confirmación previa al envío de una transferencia, con un resumen breve y validación de sus datos.
-- Impacto objetivo: reducir en 20% las quejas por transferencias duplicadas dentro de un mes.
+- Add a pre-send confirmation step for transfers, including a summary message and data validation.
+- Expected impact: reduce complaints caused by duplicate transfers by 20% within one month.
 
 ## 2. Scope
-- **Dentro del alcance:** confirmación antes del envío, mensaje resumen y validación de datos.
-- **Fuera del alcance:** cambios de infraestructura y rediseño completo de la interfaz.
+- **In scope**
+  - Show a transfer summary and request explicit confirmation before sending.
+  - Validate transfer data before submission.
+  - Integrate with the existing accounts and transfers services.
+- **Out of scope**
+  - Infrastructure changes.
+  - A complete frontend redesign.
 
-## 3. Supuestos
-- La solución se integra con el frontend web y la API REST existentes.
-- No se asume qué campos aparecen en el resumen ni cuáles son las reglas exactas de validación; están pendientes de confirmación.
+## 3. Assumptions
+- The feature will use the existing REST API, web frontend, and standardized logging.
+- The specific summary fields and validation rules have not yet been defined.
 
-## 4. Decisiones técnicas por tomar (pendientes o resueltas)
-- **Pendiente:** definir qué versión de la API de transferencias es propietaria del contrato de confirmación.
-- **Pendiente:** acordar las reglas de validación de importes y otros datos de transferencia.
-- **Pendiente:** acordar el contenido del resumen y el evento de logging, evitando registrar valores sensibles.
+## 4. Technical decisions to make (pending or resolved)
+- **Pending:** Determine which transfer details appear in the confirmation summary.
+- **Pending:** Define validation rules and how validation errors are presented.
+- **Pending:** Agree on the baseline and data source for measuring duplicate-transfer complaints.
+- **Pending:** Confirm which existing service owns each part of the transfer flow.
 
-## 5. Riesgos y mitigaciones
-- **Exposición de datos sensibles en logs:** revisar los eventos afectados y verificar que no incluyan valores sensibles; acordar el esquema de logging antes de implementar.
-- **Errores en la validación del importe:** documentar las reglas con el responsable de producto y cubrir casos válidos e inválidos con pruebas antes de liberar.
+## 5. Risks and mitigations
+- **Sensitive data exposure in logs:** Review the transfer flow's logs and verify that sensitive values are not recorded.
+- **Incorrect amount validation:** Agree on amount-validation rules and cover each agreed case with tests.
+- **Integration issues with accounts or transfers services:** Verify the confirmation flow against both existing service integrations before release.
 
-## 6. Criterios de aceptación (medibles)
-- Al menos 95% de los intentos con datos válidos muestran la confirmación antes del envío.
-- Los datos inválidos bloquean el envío y muestran un mensaje de validación.
-- Las quejas por transferencias duplicadas disminuyen 20% dentro de un mes, comparadas con el baseline acordado.
-- Los eventos de confirmación no contienen valores sensibles.
+## 6. Acceptance criteria (measurable)
+- Every transfer submission requires explicit user confirmation after the summary is displayed.
+- Transfer data that fails an agreed validation rule is not submitted and produces an appropriate validation message.
+- Every agreed validation case has a passing automated test.
+- Duplicate-transfer complaints decrease by 20% within one month of release, measured against the agreed baseline.
 
-## 7. Plan de validación
-- **Pruebas unitarias:** verificar validación de datos válidos e inválidos y el bloqueo del envío ante errores.
-- **Pruebas funcionales:** recorrer el flujo web desde la captura de datos hasta confirmar o detener el envío; comprobar que aparece el resumen antes de enviar.
-- **Seguridad:** inspeccionar los eventos de logging generados y confirmar que no incluyen datos sensibles.
-- **Evidencia requerida:** resultados de pruebas, checklist de revisión de logs, documentación breve actualizada y PR revisado, conforme al DoD indicado.
+## 7. Validation plan
+- **Unit tests:** Cover the confirmation gate, summary data, and agreed valid and invalid input cases.
+- **Functional tests:** Verify the transfer flow with the accounts and transfers services, including that no transfer is submitted before confirmation.
+- **Security (minimum checks):** Inspect relevant logs to verify that sensitive transfer data is not exposed.
+- **Required evidence (what to attach):** Unit and functional test results, a completed log-review checklist, and updated brief documentation.
 
-## 8. Tareas sugeridas por rol
-- **Chapter/PO:** acordar baseline y método de medición; confirmar el objetivo de reducción; definir los campos del resumen.
-- **Tech Lead:**
-	- Identificar la versión API propietaria.
-	- Acordar el contrato entre frontend y servicios.
-	- Revisar el diseño de validación y logging.
-- **Backend:**
-	- Confirmar el contrato REST aplicable.
-	- Implementar o ajustar la validación acordada.
-	- Asegurar que los eventos no registren valores sensibles.
-- **Frontend:** implementar la confirmación previa al envío; presentar el resumen acordado; impedir el envío y mostrar errores de validación.
-- **QA:**
-	- Diseñar casos válidos e inválidos.
-	- Verificar la confirmación antes del envío.
-	- Recopilar resultados y evidencia de la validación de logs.
-- **Cyber:** revisar el riesgo de exposición en logs; definir comprobaciones mínimas de datos sensibles; revisar la evidencia de logging antes de aprobar.
+## 8. Suggested tasks by role
+- **Chapter/PO**
+  - Confirm the 20% target, measurement source, and baseline.
+  - Define the information shown in the confirmation summary.
+  - Agree on expected validation behavior and user-facing messages.
+- **Tech Lead**
+  - Confirm the design fits the existing REST API and web frontend.
+  - Define integration responsibilities for the accounts and transfers services.
+  - Review validation, logging, and acceptance criteria with the team.
+- **Backend**
+  - Implement the agreed transfer-data validation.
+  - Integrate the flow with the existing accounts and transfers services.
+  - Verify that sensitive values are excluded from relevant logs.
+- **Frontend**
+  - Implement the pre-send confirmation step.
+  - Display the agreed transfer summary.
+  - Present the agreed validation messages and prevent submission until confirmation.
+- **QA**
+  - Test confirmed and unconfirmed transfer flows.
+  - Verify agreed valid and invalid data cases.
+  - Attach test results and complete the log-review checklist.
+- **Cyber**
+  - Review the risk of sensitive data exposure in logs.
+  - Verify that the confirmation summary contains only agreed transfer details.
+  - Record the results of the minimum security checks.
 
-## 9. Preguntas abiertas
-- ¿Qué baseline y fuente de datos se usarán para medir la reducción del 20%?
-- ¿Qué versión de la API define el contrato de confirmación?
-- ¿Qué campos debe incluir el resumen y cuáles son las reglas de validación del importe?
-- ¿Qué evento de logging se emitirá y qué datos están autorizados en él?
+## 9. Open questions
+- Which fields should appear in the confirmation summary?
+- What are the exact validation rules for transfer data and amounts, and what error messages should users see?
+- What source and time period will establish the baseline for duplicate-transfer complaints?
+- Which service owns each part of the confirmation and transfer submission contract?
